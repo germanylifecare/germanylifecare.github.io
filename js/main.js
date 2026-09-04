@@ -233,9 +233,10 @@ async function onSubmit(e) {
       return;
     }
 
-    showStatus("✅ অর্ডার সফলভাবে জমা হয়েছে! আমাদের টিম শীঘ্রই কল করে কনফার্ম করবে।", "success");
     els.orderForm.reset();
     setQuantity(1);
+    window.location.href = "thank-you.html";
+    return;
   } catch (err) {
     console.error(err);
     showStatus("নেটওয়ার্ক সমস্যা হয়েছে। আবার চেষ্টা করুন।", "error");
