@@ -6,8 +6,8 @@
 const CONFIG = {
   // ---- Supabase ----------------------------------------------------------
   // Supabase Dashboard → Project Settings → API → Project URL / anon public key
-  SUPABASE_URL: "https://YOUR-PROJECT-REF.supabase.co",
-  SUPABASE_ANON_KEY: "YOUR-ANON-PUBLIC-KEY",
+  SUPABASE_URL: "https://mdbhsfquzxoxtrdpgjlk.supabase.co",
+  SUPABASE_ANON_KEY: "sb_publishable_QgBu3JjvZ9caIRCjyuKc7g_cMjV8OM_",
 
   // ---- Product ------------------------------------------------------------
   PRODUCT_NAME: "Sealpack Germany Homeopathy",
@@ -26,6 +26,6 @@ const CONFIG = {
   },
 
   // ---- Contact / trust ------------------------------------------------------
-  SUPPORT_PHONE: "01XXXXXXXXX", // <-- বসাও: অর্ডার সংক্রান্ত হেল্পলাইন নাম্বার
+  SUPPORT_PHONE: "09617996611",
   BRAND_NAME: "Germany Life Care",
 };
