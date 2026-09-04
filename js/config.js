@@ -21,7 +21,7 @@ const CONFIG = {
   // ---- Advance payment (delivery charge collection) ------------------------
   // এখানে যে bKash/Nagad নাম্বারটা বসাবে, সেটাই কাস্টমার Send Money করবে।
   PAYMENT_NUMBERS: {
-    bkash: "01941374217",
+    bkash: "01303886699",
     nagad: "01410353910",
   },
 
