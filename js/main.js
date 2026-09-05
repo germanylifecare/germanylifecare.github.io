@@ -164,10 +164,10 @@ function validateForm(data) {
   if (!data.district) { setError("district", "জেলা বাছাই করুন"); ok = false; }
   else setError("district", "");
 
-  if (!PHONE_RE.test(data.senderNumber)) { setError("senderNumber", "সঠিক ১১ ডিজিটের নাম্বার দিন"); ok = false; }
+  if (data.senderNumber && !PHONE_RE.test(data.senderNumber)) { setError("senderNumber", "সঠিক ১১ ডিজিটের নাম্বার দিন"); ok = false; }
   else setError("senderNumber", "");
 
-  if (!data.trxId.trim() || data.trxId.trim().length < 4) { setError("trxId", "সঠিক Transaction ID দিন"); ok = false; }
+  if (data.trxId.trim() && data.trxId.trim().length < 4) { setError("trxId", "সঠিক Transaction ID দিন"); ok = false; }
   else setError("trxId", "");
 
   return ok;
@@ -257,8 +257,8 @@ async function onSubmit(e) {
     delivery_charge: deliveryCharge,
     grand_total: grandTotal,
     payment_method: data.paymentMethod,
-    sender_number: data.senderNumber,
-    trx_id: data.trxId.trim(),
+    sender_number: data.senderNumber || null,
+    trx_id: data.trxId.trim() || null,
   };
 
   setSubmitting(true);
