@@ -277,9 +277,12 @@ async function onSubmit(e) {
     // অর্ডার প্লেস হয়ে গেছে — এই lead টা আর "abandoned" না
     await supabaseClient.from("leads").update({ status: "converted" }).eq("phone", data.phone);
 
+    // Meta Pixel Purchase value — শুধু প্রোডাক্ট মূল্য (ডেলিভারি চার্জ বাদে), USD এ কনভার্ট
+    const purchaseValueUsd = (productTotal / CONFIG.USD_CONVERSION_RATE).toFixed(2);
+
     els.orderForm.reset();
     setQuantity(1);
-    window.location.href = "thank-you.html";
+    window.location.href = "thank-you.html?value=" + purchaseValueUsd;
     return;
   } catch (err) {
     console.error(err);
