@@ -275,7 +275,7 @@ async function onSubmit(e) {
     }
 
     // অর্ডার প্লেস হয়ে গেছে — এই lead টা আর "abandoned" না
-    supabaseClient.from("leads").update({ status: "converted" }).eq("phone", data.phone).then(() => {});
+    await supabaseClient.from("leads").update({ status: "converted" }).eq("phone", data.phone);
 
     els.orderForm.reset();
     setQuantity(1);
