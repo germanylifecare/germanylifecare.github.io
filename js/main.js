@@ -15,14 +15,17 @@ const DISTRICTS = [
 ];
 
 const els = {};
+let supabaseClient;
 document.addEventListener("DOMContentLoaded", init);
 
 function init() {
   cacheEls();
+  supabaseClient = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
   populateDistricts();
   wireQuantityStepper();
   populatePricesFromConfig();
   wireForm();
+  wireLeadCapture();
   wireScrollReveal();
   wireCopyButtons();
   wireMobileCta();
@@ -177,6 +180,45 @@ function wireForm() {
   els.orderForm.addEventListener("submit", onSubmit);
 }
 
+// ---------------------------------------------------------------------
+// Abandoned lead capture — নাম + ফোন (ভ্যালিড) দুটোই থাকলে চুপচাপ
+// আংশিক ডেটা সেভ করে রাখে, ভিজিটর ফর্ম সাবমিট করার আগেই
+// ---------------------------------------------------------------------
+let leadSaveTimer = null;
+
+function wireLeadCapture() {
+  ["customerName", "phone", "address"].forEach(id => {
+    els[id].addEventListener("input", scheduleLeadSave);
+  });
+  els.district.addEventListener("change", scheduleLeadSave);
+}
+
+function scheduleLeadSave() {
+  clearTimeout(leadSaveTimer);
+  leadSaveTimer = setTimeout(saveLead, 1500);
+}
+
+async function saveLead() {
+  const name = els.customerName.value.trim();
+  const phone = els.phone.value.trim();
+
+  if (!name || !PHONE_RE.test(phone)) return;
+
+  const leadPayload = {
+    customer_name: name,
+    phone: phone,
+    district: els.district.value || null,
+    address: els.address.value.trim() || null,
+    quantity: currentQty(),
+  };
+
+  try {
+    await supabaseClient.from("leads").upsert(leadPayload, { onConflict: "phone" });
+  } catch (err) {
+    console.error("lead save failed", err);
+  }
+}
+
 async function onSubmit(e) {
   e.preventDefault();
 
@@ -223,8 +265,7 @@ async function onSubmit(e) {
   showStatus("অর্ডার সাবমিট হচ্ছে…", "");
 
   try {
-    const client = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
-    const { error } = await client.from("orders").insert(payload);
+    const { error } = await supabaseClient.from("orders").insert(payload);
 
     if (error) {
       console.error(error);
@@ -232,6 +273,9 @@ async function onSubmit(e) {
       setSubmitting(false);
       return;
     }
+
+    // অর্ডার প্লেস হয়ে গেছে — এই lead টা আর "abandoned" না
+    supabaseClient.from("leads").update({ status: "converted" }).eq("phone", data.phone).then(() => {});
 
     els.orderForm.reset();
     setQuantity(1);
