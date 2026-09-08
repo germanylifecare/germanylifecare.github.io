@@ -15,14 +15,17 @@ const DISTRICTS = [
 ];
 
 const els = {};
+let supabaseClient;
 document.addEventListener("DOMContentLoaded", init);
 
 function init() {
   cacheEls();
+  supabaseClient = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
   populateDistricts();
   wireQuantityStepper();
   populatePricesFromConfig();
   wireForm();
+  wireLeadCapture();
   wireScrollReveal();
   wireCopyButtons();
   wireMobileCta();
@@ -161,10 +164,10 @@ function validateForm(data) {
   if (!data.district) { setError("district", "জেলা বাছাই করুন"); ok = false; }
   else setError("district", "");
 
-  if (!PHONE_RE.test(data.senderNumber)) { setError("senderNumber", "সঠিক ১১ ডিজিটের নাম্বার দিন"); ok = false; }
+  if (data.senderNumber && !PHONE_RE.test(data.senderNumber)) { setError("senderNumber", "সঠিক ১১ ডিজিটের নাম্বার দিন"); ok = false; }
   else setError("senderNumber", "");
 
-  if (!data.trxId.trim() || data.trxId.trim().length < 4) { setError("trxId", "সঠিক Transaction ID দিন"); ok = false; }
+  if (data.trxId.trim() && data.trxId.trim().length < 4) { setError("trxId", "সঠিক Transaction ID দিন"); ok = false; }
   else setError("trxId", "");
 
   return ok;
@@ -175,6 +178,45 @@ function validateForm(data) {
 // ---------------------------------------------------------------------
 function wireForm() {
   els.orderForm.addEventListener("submit", onSubmit);
+}
+
+// ---------------------------------------------------------------------
+// Abandoned lead capture — নাম + ফোন (ভ্যালিড) দুটোই থাকলে চুপচাপ
+// আংশিক ডেটা সেভ করে রাখে, ভিজিটর ফর্ম সাবমিট করার আগেই
+// ---------------------------------------------------------------------
+let leadSaveTimer = null;
+
+function wireLeadCapture() {
+  ["customerName", "phone", "address"].forEach(id => {
+    els[id].addEventListener("input", scheduleLeadSave);
+  });
+  els.district.addEventListener("change", scheduleLeadSave);
+}
+
+function scheduleLeadSave() {
+  clearTimeout(leadSaveTimer);
+  leadSaveTimer = setTimeout(saveLead, 1500);
+}
+
+async function saveLead() {
+  const name = els.customerName.value.trim();
+  const phone = els.phone.value.trim();
+
+  if (!name || !PHONE_RE.test(phone)) return;
+
+  const leadPayload = {
+    customer_name: name,
+    phone: phone,
+    district: els.district.value || null,
+    address: els.address.value.trim() || null,
+    quantity: currentQty(),
+  };
+
+  try {
+    await supabaseClient.from("leads").upsert(leadPayload, { onConflict: "phone" });
+  } catch (err) {
+    console.error("lead save failed", err);
+  }
 }
 
 async function onSubmit(e) {
@@ -215,16 +257,15 @@ async function onSubmit(e) {
     delivery_charge: deliveryCharge,
     grand_total: grandTotal,
     payment_method: data.paymentMethod,
-    sender_number: data.senderNumber,
-    trx_id: data.trxId.trim(),
+    sender_number: data.senderNumber || null,
+    trx_id: data.trxId.trim() || null,
   };
 
   setSubmitting(true);
   showStatus("অর্ডার সাবমিট হচ্ছে…", "");
 
   try {
-    const client = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
-    const { error } = await client.from("orders").insert(payload);
+    const { error } = await supabaseClient.from("orders").insert(payload);
 
     if (error) {
       console.error(error);
@@ -233,9 +274,15 @@ async function onSubmit(e) {
       return;
     }
 
+    // অর্ডার প্লেস হয়ে গেছে — এই lead টা আর "abandoned" না
+    await supabaseClient.from("leads").update({ status: "converted" }).eq("phone", data.phone);
+
+    // Meta Pixel Purchase value — শুধু প্রোডাক্ট মূল্য (ডেলিভারি চার্জ বাদে), USD এ কনভার্ট
+    const purchaseValueUsd = (productTotal / CONFIG.USD_CONVERSION_RATE).toFixed(2);
+
     els.orderForm.reset();
     setQuantity(1);
-    window.location.href = "thank-you.html";
+    window.location.href = "thank-you.html?value=" + purchaseValueUsd;
     return;
   } catch (err) {
     console.error(err);

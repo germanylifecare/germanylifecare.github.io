@@ -18,6 +18,12 @@ const CONFIG = {
   // ---- Delivery -----------------------------------------------------------
   DELIVERY_CHARGE: 70, // সারা বাংলাদেশে একই রেট
 
+  // ---- Meta Pixel tracking --------------------------------------------------
+  // Purchase event value = শুধু প্রোডাক্ট মূল্য (ডেলিভারি চার্জ বাদে, ওটা courier-কে
+  // pass-through, company-র revenue না)। USD_CONVERSION_RATE ম্যানুয়াল রেট —
+  // প্রতি ২-৩ সপ্তাহে xe.com/google চেক করে আপডেট করে নিও।
+  USD_CONVERSION_RATE: 124, // 1 USD = ৳ (Sep 2026 rate)
+
   // ---- Advance payment (delivery charge collection) ------------------------
   // এখানে যে bKash/Nagad নাম্বারটা বসাবে, সেটাই কাস্টমার Send Money করবে।
   PAYMENT_NUMBERS: {

@@ -280,7 +280,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
 
         <div class="payment-box">
-          <h3>Step 2 — ৳<span id="advanceEcho2">70</span> Payment করুন</h3>
+          <h3>Step 2 — ৳<span id="advanceEcho2">70</span> Payment করুন <span style="font-weight:500;font-size:13px;color:var(--text-dim);">(ঐচ্ছিক)</span></h3>
+    <p class="form-hint" style="margin:-4px 0 14px;">চাইলে এখনই পাঠিয়ে দিতে পারেন, নাহলে আমাদের টিম কল করে সংগ্রহ করে নেবে — অর্ডার আটকাবে না।</p>
           <div class="payment-box__numbers">
             <div class="payment-number">
               <span class="payment-number__main">
@@ -301,22 +302,22 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
           <div class="form-grid">
             <div class="form-field">
-              <label for="paymentMethod">কোন মাধ্যমে পাঠিয়েছেন? *</label>
-              <select id="paymentMethod" name="paymentMethod" required>
+              <label for="paymentMethod">কোন মাধ্যমে পাঠিয়েছেন? (ঐচ্ছিক)</label>
+              <select id="paymentMethod" name="paymentMethod">
                 <option value="bkash">bKash</option>
                 <option value="nagad">Nagad</option>
               </select>
             </div>
             <div class="form-field">
-              <label for="senderNumber">আপনি যে নাম্বার থেকে Payment করেছেন *</label>
-              <input type="tel" id="senderNumber" name="senderNumber" required placeholder="01XXXXXXXXX" maxlength="11" inputmode="numeric" autocomplete="tel">
+              <label for="senderNumber">আপনি যে নাম্বার থেকে Payment করেছেন (ঐচ্ছিক)</label>
+              <input type="tel" id="senderNumber" name="senderNumber" placeholder="01XXXXXXXXX" maxlength="11" inputmode="numeric" autocomplete="tel">
               <span class="form-error" data-for="senderNumber"></span>
             </div>
             <div class="form-field form-field--full">
-              <label for="trxId">Transaction ID (TrxID) *</label>
-              <input type="text" id="trxId" name="trxId" required placeholder="যেমন: 9G7H2K1L0M">
+              <label for="trxId">Transaction ID (TrxID) (ঐচ্ছিক)</label>
+              <input type="text" id="trxId" name="trxId" placeholder="যেমন: 9G7H2K1L0M">
               <span class="form-error" data-for="trxId"></span>
-              <span class="form-hint">bKash/Nagad SMS-এ পাওয়া TrxID এখানে বসান — এটা দিয়েই আমরা পেমেন্ট ভেরিফাই করব।</span>
+              <span class="form-hint">দিয়ে রাখলে ভেরিফিকেশন দ্রুত হবে — না দিলেও অসুবিধা নেই, আমাদের টিম কল করে সংগ্রহ করে নেবে।</span>
             </div>
           </div>
         </div>
