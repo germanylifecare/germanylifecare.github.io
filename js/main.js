@@ -333,6 +333,8 @@ async function onSubmit(e) {
           value: parseFloat(purchaseValueUsd),
           currency: "USD",
           phone: data.phone,
+          customer_name: data.customerName.trim(),
+          district: data.district,
           user_agent: navigator.userAgent,
           event_source_url: window.location.href,
           fbp: getCookie("_fbp"),
