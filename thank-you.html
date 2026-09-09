@@ -37,8 +37,13 @@ fbq('track', 'PageView');
 
 var _params = new URLSearchParams(window.location.search);
 var _purchaseValue = _params.get('value');
+var _eventId = _params.get('eid');
 if (_purchaseValue) {
-  fbq('track', 'Purchase', { value: parseFloat(_purchaseValue), currency: 'USD' });
+  if (_eventId) {
+    fbq('track', 'Purchase', { value: parseFloat(_purchaseValue), currency: 'USD' }, { eventID: _eventId });
+  } else {
+    fbq('track', 'Purchase', { value: parseFloat(_purchaseValue), currency: 'USD' });
+  }
 }
 </script>
 <noscript><img height="1" width="1" style="display:none"

@@ -180,6 +180,11 @@ function wireForm() {
   els.orderForm.addEventListener("submit", onSubmit);
 }
 
+function getCookie(name) {
+  const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
+  return match ? match[2] : undefined;
+}
+
 // ---------------------------------------------------------------------
 // Abandoned lead capture — নাম + ফোন (ভ্যালিড) দুটোই থাকলে চুপচাপ
 // আংশিক ডেটা সেভ করে রাখে, ভিজিটর ফর্ম সাবমিট করার আগেই
@@ -280,9 +285,37 @@ async function onSubmit(e) {
     // Meta Pixel Purchase value — শুধু প্রোডাক্ট মূল্য (ডেলিভারি চার্জ বাদে), USD এ কনভার্ট
     const purchaseValueUsd = (productTotal / CONFIG.USD_CONVERSION_RATE).toFixed(2);
 
+    // --- Meta CAPI: server-side Purchase event ---
+    // একই event_id thank-you.html-এর browser pixel-এও পাঠানো হবে, যাতে Meta
+    // দুটোকে deduplicate করে ডাবল-কাউন্ট না করে।
+    const capiEventId = crypto.randomUUID();
+    try {
+      fetch("https://mdbhsfquzxoxtrdpgjlk.supabase.co/functions/v1/meta-capi-purchase", {
+        method: "POST",
+        keepalive: true,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + CONFIG.SUPABASE_ANON_KEY,
+          "apikey": CONFIG.SUPABASE_ANON_KEY,
+        },
+        body: JSON.stringify({
+          event_id: capiEventId,
+          value: parseFloat(purchaseValueUsd),
+          currency: "USD",
+          phone: data.phone,
+          user_agent: navigator.userAgent,
+          event_source_url: window.location.href,
+          fbp: getCookie("_fbp"),
+          fbc: getCookie("_fbc"),
+        }),
+      });
+    } catch (err) {
+      console.error("CAPI send failed (non-blocking)", err);
+    }
+
     els.orderForm.reset();
     setQuantity(1);
-    window.location.href = "thank-you.html?value=" + purchaseValueUsd;
+    window.location.href = "thank-you.html?value=" + purchaseValueUsd + "&eid=" + capiEventId;
     return;
   } catch (err) {
     console.error(err);
