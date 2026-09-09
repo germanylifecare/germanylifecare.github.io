@@ -29,7 +29,19 @@ function init() {
   wireScrollReveal();
   wireCopyButtons();
   wireMobileCta();
+  trackViewContent();
   document.getElementById("year").textContent = new Date().getFullYear();
+}
+
+// Meta Pixel ViewContent — landing page load হওয়ার সাথে সাথেই fire হবে
+function trackViewContent() {
+  if (typeof fbq !== "function") return;
+  fbq('track', 'ViewContent', {
+    content_name: CONFIG.PRODUCT_NAME,
+    content_type: 'product',
+    value: parseFloat((CONFIG.DISCOUNT_PRICE / CONFIG.USD_CONVERSION_RATE).toFixed(2)),
+    currency: 'USD',
+  });
 }
 
 // ---------------------------------------------------------------------
@@ -190,6 +202,7 @@ function getCookie(name) {
 // আংশিক ডেটা সেভ করে রাখে, ভিজিটর ফর্ম সাবমিট করার আগেই
 // ---------------------------------------------------------------------
 let leadSaveTimer = null;
+let leadEventFired = false;
 
 function wireLeadCapture() {
   ["customerName", "phone", "address"].forEach(id => {
@@ -219,6 +232,13 @@ async function saveLead() {
 
   try {
     await supabaseClient.from("leads").upsert(leadPayload, { onConflict: "phone" });
+
+    // Meta Pixel Lead — প্রথমবার ভ্যালিড নাম+ফোন দেওয়ার পর একবারই fire,
+    // যাতে drop-off/abandoned form-ও signal হিসেবে কাজে লাগে
+    if (!leadEventFired && typeof fbq === "function") {
+      fbq('track', 'Lead', { content_name: CONFIG.PRODUCT_NAME });
+      leadEventFired = true;
+    }
   } catch (err) {
     console.error("lead save failed", err);
   }
@@ -244,6 +264,16 @@ async function onSubmit(e) {
   if (!validateForm(data)) {
     showStatus("সব ঘর সঠিকভাবে পূরণ করুন।", "error");
     return;
+  }
+
+  // Meta Pixel InitiateCheckout — ভ্যালিড ফর্ম সাবমিট করার মুহূর্তে fire হবে
+  if (typeof fbq === "function") {
+    fbq('track', 'InitiateCheckout', {
+      content_name: CONFIG.PRODUCT_NAME,
+      num_items: data.quantity,
+      value: parseFloat(((CONFIG.DISCOUNT_PRICE * data.quantity) / CONFIG.USD_CONVERSION_RATE).toFixed(2)),
+      currency: 'USD',
+    });
   }
 
   const unitPrice = CONFIG.DISCOUNT_PRICE;
