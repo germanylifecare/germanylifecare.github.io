@@ -10,7 +10,7 @@ const CONFIG = {
   SUPABASE_ANON_KEY: "sb_publishable_QgBu3JjvZ9caIRCjyuKc7g_cMjV8OM_",
 
   // ---- Product ------------------------------------------------------------
-  PRODUCT_NAME: "Sealpack Germany Homeopathy",
+  PRODUCT_NAME: "Dr. Reckeweg R41 with Supporting File",
   REGULAR_PRICE: 1680, // official germanylifecarepharmacy.com price — ৳1680 → ৳1280 (24% off)
   DISCOUNT_PRICE: 1280,
   MAX_QUANTITY: 5,
