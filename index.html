@@ -154,6 +154,36 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   }
   .autocomplete-item:hover { background: rgba(200,30,44,0.08); color: var(--tangerine); }
   .autocomplete-empty { padding: 10px 12px; font-size: 13px; color: var(--text-dim); }
+
+  .upsell__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  .upsell__card {
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    padding: 18px 18px 20px;
+    text-align: center;
+    box-shadow: var(--shadow);
+  }
+  .upsell__media {
+    aspect-ratio: 1 / 1;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    margin-bottom: 14px;
+    background: var(--ink-soft);
+  }
+  .upsell__media img { width: 100%; height: 100%; object-fit: contain; padding: 10px; }
+  .upsell__name { font-size: 17px; font-weight: 700; margin: 0 0 8px; }
+  .upsell__desc { font-size: 13.5px; color: var(--text-dim); margin: 0 0 14px; }
+  .upsell__price { font-size: 22px; font-weight: 800; color: var(--tangerine); margin-bottom: 14px; }
+  @media (max-width: 560px) {
+    .upsell__grid { grid-template-columns: 1fr; }
+  }
 </style>
 <!-- Meta Pixel Code -->
 <script>
@@ -509,6 +539,42 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <p id="formStatus" class="form-status" role="status" aria-live="polite"></p>
       </form>
     </div>
+  </div>
+</section>
+
+<!-- ================= UPSELL / ADD-ONS ================= -->
+<section class="section upsell" id="addons">
+  <div class="container">
+    <div class="divider"><span class="divider__dot"></span></div>
+    <span class="eyebrow center">আরও কিছু দরকার?</span>
+    <h2 class="section__title center">এই প্যাকেজগুলোও দেখে নিতে পারেন</h2>
+    <p class="order-section__sub center">R41-এর সাথে বা আলাদাভাবে অর্ডার করতে চাইলে নিচের বাটনে ক্লিক করুন — আমাদের টিম WhatsApp/কলে কনফার্ম করে নেবে।</p>
+
+    <div class="upsell__grid">
+      <div class="upsell__card">
+        <div class="upsell__media">
+          <img src="img/combo-3pcs.jpg" alt="3 Pcs Combo Pack" loading="lazy">
+        </div>
+        <h3 class="upsell__name">3 Pcs Combo Pack</h3>
+        <p class="upsell__desc">প্রতিদিনের এনার্জি, ভিটালিটি ও ইমিউনিটি সাপোর্টের জন্য ৩টি জার্মান-স্ট্যান্ডার্ড হোমিওপ্যাথিক ফর্মুলার কম্বো — একসাথে নিলে সাশ্রয়ী।</p>
+        <div class="upsell__price">৳1320</div>
+        <a href="https://wa.me/8801303886699?text=আমি%20৩%20Pcs%20Combo%20Pack%20(৳1320)%20অর্ডার%20করতে%20চাই" target="_blank" rel="noopener" class="btn btn--primary btn--block">WhatsApp-এ অর্ডার করুন</a>
+      </div>
+
+      <div class="upsell__card">
+        <div class="upsell__media">
+          <img src="img/monex-man.jpg" alt="Monex Man Capsule" loading="lazy">
+        </div>
+        <h3 class="upsell__name">Monex Man Capsule</h3>
+        <p class="upsell__desc">পুরুষদের প্রতিদিনের এনার্জি, স্ট্যামিনা ও কনফিডেন্স বজায় রাখতে সহায়ক হার্বাল ক্যাপসুল ফর্মুলা — কাজের চাপেও পারফরম্যান্স ধরে রাখুন।</p>
+        <div class="upsell__price">৳1500</div>
+        <a href="https://wa.me/8801303886699?text=আমি%20Monex%20Man%20Capsule%20(৳1500)%20অর্ডার%20করতে%20চাই" target="_blank" rel="noopener" class="btn btn--primary btn--block">WhatsApp-এ অর্ডার করুন</a>
+      </div>
+    </div>
+
+    <p class="hero__disclaimer" style="margin-top:20px;">
+      * এই পণ্যগুলো কোনো রোগের চিকিৎসা, নিরাময় বা প্রতিরোধের দাবি করে না। ব্যবহারের আগে প্যাকেজিং-এর নির্দেশনা পড়ুন।
+    </p>
   </div>
 </section>
 
