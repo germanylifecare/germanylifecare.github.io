@@ -4,7 +4,7 @@
 
 const DISTRICTS = [
   "Bagerhat","Bandarban","Barguna","Barishal","Bhola","Bogura","Brahmanbaria","Chandpur",
-  "Chattogram","Chuadanga","Cox's Bazar","Cumilla","Dhaka","Dinajpur","Faridpur","Feni",
+  "Chapainawabganj","Chattogram","Chuadanga","Cox's Bazar","Cumilla","Dhaka","Dinajpur","Faridpur","Feni",
   "Gaibandha","Gazipur","Gopalganj","Habiganj","Jamalpur","Jashore","Jhalokati","Jhenaidah",
   "Joypurhat","Khagrachhari","Khulna","Kishoreganj","Kurigram","Kushtia","Lakshmipur",
   "Lalmonirhat","Madaripur","Magura","Manikganj","Meherpur","Moulvibazar","Munshiganj",
@@ -89,11 +89,11 @@ function cacheEls() {
 }
 
 function populateDistricts() {
+  const list = document.getElementById("districtList");
   DISTRICTS.forEach(name => {
     const opt = document.createElement("option");
     opt.value = name;
-    opt.textContent = name;
-    els.district.appendChild(opt);
+    list.appendChild(opt);
   });
 }
 
@@ -186,7 +186,7 @@ function validateForm(data) {
   if (!data.address.trim() || data.address.trim().length < 8) { setError("address", "সম্পূর্ণ ঠিকানা লিখুন"); ok = false; }
   else setError("address", "");
 
-  if (!data.district) { setError("district", "জেলা বাছাই করুন"); ok = false; }
+  if (!data.district || !DISTRICTS.includes(data.district)) { setError("district", "লিস্ট থেকে সঠিক জেলা বাছাই করুন"); ok = false; }
   else setError("district", "");
 
   if (data.senderNumber && !PHONE_RE.test(data.senderNumber)) { setError("senderNumber", "সঠিক ১১ ডিজিটের নাম্বার দিন"); ok = false; }

@@ -380,9 +380,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
           <div class="form-field">
             <label for="district">জেলা / শহর *</label>
-            <select id="district" name="district" required>
-              <option value="" disabled selected>জেলা বাছাই করুন</option>
-            </select>
+            <input type="text" id="district" name="district" list="districtList" required autocomplete="off" placeholder="জেলার নাম লিখুন">
+            <datalist id="districtList"></datalist>
             <span class="form-error" data-for="district"></span>
           </div>
 
