@@ -53,6 +53,7 @@ function init() {
   populatePricesFromConfig();
   wireForm();
   wireLeadCapture();
+  wireDuplicateCheck();
   wireScrollReveal();
   wireCopyButtons();
   wireMobileCta();
@@ -307,6 +308,40 @@ async function saveLead() {
     }
   } catch (err) {
     console.error("lead save failed", err);
+  }
+}
+
+// ---------------------------------------------------------------------
+// Early duplicate-order warning — ফোন নাম্বার সম্পূর্ণ লেখার সাথে সাথেই
+// চেক করে, bKash-এ টাকা পাঠানোর আগেই customer-কে জানিয়ে দেয়। আসল hard-block
+// তো submit-এর সময় database trigger-ই করে — এটা শুধু early heads-up।
+// ---------------------------------------------------------------------
+let dupCheckTimer = null;
+let lastDupWarnedPhone = null;
+
+function wireDuplicateCheck() {
+  els.phone.addEventListener("input", () => {
+    clearTimeout(dupCheckTimer);
+    const phone = els.phone.value.trim();
+    if (phone !== lastDupWarnedPhone) {
+      setError("phone", "");
+      lastDupWarnedPhone = null;
+    }
+    if (!PHONE_RE.test(phone)) return;
+    dupCheckTimer = setTimeout(() => checkDuplicateToday(phone), 600);
+  });
+}
+
+async function checkDuplicateToday(phone) {
+  try {
+    const { data, error } = await supabaseClient.rpc("check_duplicate_order_today", { p_phone: phone });
+    if (error) { console.error("dup check failed", error); return; }
+    if (data === true && els.phone.value.trim() === phone) {
+      lastDupWarnedPhone = phone;
+      setError("phone", "⚠️ আপনি আজকে ইতিমধ্যে অর্ডার করেছেন। bKash-এ টাকা পাঠানোর আগে কল করুন: " + CONFIG.SUPPORT_PHONE);
+    }
+  } catch (err) {
+    console.error("dup check error", err);
   }
 }
 
