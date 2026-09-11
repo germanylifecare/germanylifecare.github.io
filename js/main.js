@@ -331,7 +331,7 @@ async function onSubmit(e) {
     product_total: productTotal,
     delivery_charge: deliveryCharge,
     grand_total: grandTotal,
-    payment_method: data.paymentMethod,
+    payment_method: data.paymentMethod || null,
     sender_number: data.senderNumber || null,
     trx_id: data.trxId.trim() || null,
   };
