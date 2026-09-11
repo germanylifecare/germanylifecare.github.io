@@ -80,11 +80,11 @@ function wireScrollReveal() {
 function cacheEls() {
   [
     "orderForm","website","customerName","phone","address","district","quantity",
-    "qtyEcho","unitPriceEcho","productTotal","deliveryEcho","grandTotal",
+    "qtyEcho","productTotal","deliveryEcho","grandTotal",
     "advanceEcho","advanceEcho2","codEcho","bkashNumber","nagadNumber",
     "paymentMethod","senderNumber","trxId","submitBtn","formStatus",
     "regularPrice","discountPrice","savePercent",
-    "qtyMinus","qtyPlus","qtyValue","mobileCta","mobileCtaPrice","mobileCtaOldPrice"
+    "mobileCta","mobileCtaPrice","mobileCtaOldPrice"
   ].forEach(id => (els[id] = document.getElementById(id)));
 }
 
@@ -102,7 +102,6 @@ function populatePricesFromConfig() {
   els.discountPrice.textContent = CONFIG.DISCOUNT_PRICE;
   const pct = Math.round((1 - CONFIG.DISCOUNT_PRICE / CONFIG.REGULAR_PRICE) * 100);
   els.savePercent.textContent = `${pct}% ছাড়`;
-  els.unitPriceEcho.textContent = CONFIG.DISCOUNT_PRICE;
   els.deliveryEcho.textContent = CONFIG.DELIVERY_CHARGE;
   els.advanceEcho.textContent = CONFIG.DELIVERY_CHARGE;
   els.advanceEcho2.textContent = CONFIG.DELIVERY_CHARGE;
@@ -117,28 +116,42 @@ function populatePricesFromConfig() {
 // Quantity stepper (+ / − buttons, hidden input holds the real value)
 // ---------------------------------------------------------------------
 function wireQuantityStepper() {
-  setQuantity(1);
-  els.qtyMinus.addEventListener("click", () => setQuantity(currentQty() - 1));
-  els.qtyPlus.addEventListener("click", () => setQuantity(currentQty() + 1));
+  const options = document.querySelectorAll("#bundleSelector .bundle-option");
+  options.forEach(opt => {
+    const input = opt.querySelector('input[type="radio"]');
+    if (!input) return;
+    input.addEventListener("change", () => selectBundle(parseInt(opt.dataset.qty, 10)));
+  });
+  selectBundle(CONFIG.DEFAULT_BUNDLE_QTY);
 }
 
 function currentQty() {
-  return parseInt(els.quantity.value || "1", 10);
+  return parseInt(els.quantity.value || String(CONFIG.DEFAULT_BUNDLE_QTY), 10);
 }
 
-function setQuantity(next) {
-  const clamped = Math.min(CONFIG.MAX_QUANTITY, Math.max(1, next));
-  els.quantity.value = clamped;
-  els.qtyValue.textContent = clamped;
-  els.qtyMinus.disabled = clamped <= 1;
-  els.qtyPlus.disabled = clamped >= CONFIG.MAX_QUANTITY;
+function bundlePrice(qty) {
+  const match = CONFIG.BUNDLES.find(b => b.qty === qty);
+  return match ? match.price : CONFIG.DISCOUNT_PRICE * qty;
+}
+
+function setQuantity(qty) {
+  selectBundle(qty);
+}
+
+function selectBundle(qty) {
+  els.quantity.value = qty;
+  document.querySelectorAll("#bundleSelector .bundle-option").forEach(opt => {
+    const isSelected = parseInt(opt.dataset.qty, 10) === qty;
+    opt.classList.toggle("is-selected", isSelected);
+    const input = opt.querySelector('input[type="radio"]');
+    if (input) input.checked = isSelected;
+  });
   recalcTotals();
 }
 
 function recalcTotals() {
   const qty = currentQty();
-  const unit = CONFIG.DISCOUNT_PRICE;
-  const productTotal = qty * unit;
+  const productTotal = bundlePrice(qty);
   const delivery = CONFIG.DELIVERY_CHARGE;
   const grand = productTotal + delivery;
   const cod = grand - delivery; // amount to pay on delivery (product total)
@@ -266,18 +279,19 @@ async function onSubmit(e) {
     return;
   }
 
+  const productTotal = bundlePrice(data.quantity);
+  const unitPrice = Math.round(productTotal / data.quantity);
+
   // Meta Pixel InitiateCheckout — ভ্যালিড ফর্ম সাবমিট করার মুহূর্তে fire হবে
   if (typeof fbq === "function") {
     fbq('track', 'InitiateCheckout', {
       content_name: CONFIG.PRODUCT_NAME,
       num_items: data.quantity,
-      value: parseFloat(((CONFIG.DISCOUNT_PRICE * data.quantity) / CONFIG.USD_CONVERSION_RATE).toFixed(2)),
+      value: parseFloat((productTotal / CONFIG.USD_CONVERSION_RATE).toFixed(2)),
       currency: 'USD',
     });
   }
 
-  const unitPrice = CONFIG.DISCOUNT_PRICE;
-  const productTotal = unitPrice * data.quantity;
   const deliveryCharge = CONFIG.DELIVERY_CHARGE;
   const grandTotal = productTotal + deliveryCharge;
 
@@ -346,7 +360,7 @@ async function onSubmit(e) {
     }
 
     els.orderForm.reset();
-    setQuantity(1);
+    setQuantity(CONFIG.DEFAULT_BUNDLE_QTY);
     window.location.href = "thank-you.html?value=" + purchaseValueUsd + "&eid=" + capiEventId;
     return;
   } catch (err) {

@@ -51,6 +51,54 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     border: 0;
     display: block;
   }
+
+  .bundle-selector {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .bundle-option {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    background: var(--ink);
+    border: 1.5px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    padding: 14px 6px 12px;
+    cursor: pointer;
+    text-align: center;
+    transition: border-color .15s ease, transform .15s ease, box-shadow .15s ease;
+  }
+  .bundle-option input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  .bundle-option:hover { transform: translateY(-2px); }
+  .bundle-option.is-selected {
+    border-color: var(--tangerine);
+    box-shadow: 0 10px 24px -12px rgba(200,30,44,0.35);
+    background: rgba(200,30,44,0.06);
+  }
+  .bundle-option__badge {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, var(--tangerine), var(--gold));
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .bundle-option__qty { font-size: 13.5px; font-weight: 700; color: var(--text); margin-top: 4px; }
+  .bundle-option__price { font-size: 16px; font-weight: 800; color: var(--tangerine); }
+  .bundle-option__unit { font-size: 10.5px; color: var(--text-dim); }
 </style>
 <!-- Meta Pixel Code -->
 <script>
@@ -312,20 +360,35 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </div>
 
           <div class="form-field">
-            <label for="qtyPlus">কোয়ান্টিটি *</label>
-            <div class="qty-stepper" role="group" aria-label="কোয়ান্টিটি বাছাই করুন">
-              <button type="button" class="qty-stepper__btn" id="qtyMinus" aria-label="কোয়ান্টিটি কমান">−</button>
-              <span class="qty-stepper__value" id="qtyValue" aria-live="polite">1</span>
-              <button type="button" class="qty-stepper__btn" id="qtyPlus" aria-label="কোয়ান্টিটি বাড়ান">+</button>
+            <label>প্যাকেজ বাছাই করুন *</label>
+            <div class="bundle-selector" id="bundleSelector" role="radiogroup" aria-label="প্যাকেজ বাছাই করুন">
+              <label class="bundle-option" data-qty="1">
+                <input type="radio" name="bundleOption" value="1">
+                <span class="bundle-option__qty">১ প্যাক</span>
+                <span class="bundle-option__price">৳1280</span>
+              </label>
+              <label class="bundle-option" data-qty="2">
+                <span class="bundle-option__badge">সবচেয়ে জনপ্রিয়</span>
+                <input type="radio" name="bundleOption" value="2" checked>
+                <span class="bundle-option__qty">২ প্যাক</span>
+                <span class="bundle-option__price">৳2400</span>
+                <span class="bundle-option__unit">প্রতি প্যাক ৳1200</span>
+              </label>
+              <label class="bundle-option" data-qty="3">
+                <input type="radio" name="bundleOption" value="3">
+                <span class="bundle-option__qty">৩ প্যাক</span>
+                <span class="bundle-option__price">৳3480</span>
+                <span class="bundle-option__unit">প্রতি প্যাক ৳1160</span>
+              </label>
             </div>
-            <input type="hidden" id="quantity" name="quantity" value="1">
+            <input type="hidden" id="quantity" name="quantity" value="2">
           </div>
         </div>
 
         <div class="order-summary">
           <div class="order-summary__row">
-            <span>প্রোডাক্ট মূল্য (<span id="qtyEcho">1</span> x ৳<span id="unitPriceEcho">1280</span>)</span>
-            <span>৳<span id="productTotal">1280</span></span>
+            <span>নির্বাচিত প্যাকেজ (<span id="qtyEcho">2</span> প্যাক)</span>
+            <span>৳<span id="productTotal">2400</span></span>
           </div>
           <div class="order-summary__row">
             <span>ডেলিভারি চার্জ (এখন পরিশোধ করতে হবে)</span>
@@ -333,11 +396,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </div>
           <div class="order-summary__row order-summary__row--total">
             <span>মোট পরিশোধযোগ্য</span>
-            <span>৳<span id="grandTotal">1350</span></span>
+            <span>৳<span id="grandTotal">2470</span></span>
           </div>
           <p class="order-summary__note">
             চাইলে ৳<span id="advanceEcho">70</span> এখনই bKash/Nagad-এ পাঠাতে পারেন (সম্পূর্ণ ঐচ্ছিক) — নাহলে আমাদের টিম কল করে সংগ্রহ করে নেবে, অর্ডার আটকাবে না।
-            বাকি ৳<span id="codEcho">1280</span> পণ্য হাতে পাওয়ার সময় ক্যাশ অন ডেলিভারিতে দেবেন।
+            বাকি ৳<span id="codEcho">2400</span> পণ্য হাতে পাওয়ার সময় ক্যাশ অন ডেলিভারিতে দেবেন।
           </p>
         </div>
 

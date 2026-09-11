@@ -15,6 +15,14 @@ const CONFIG = {
   DISCOUNT_PRICE: 1280,
   MAX_QUANTITY: 5,
 
+  // ---- Bundle pricing (tiered pack pricing) --------------------------------
+  BUNDLES: [
+    { qty: 1, price: 1280 },
+    { qty: 2, price: 2400 },
+    { qty: 3, price: 3480 },
+  ],
+  DEFAULT_BUNDLE_QTY: 2,
+
   // ---- Delivery -----------------------------------------------------------
   DELIVERY_CHARGE: 70, // সারা বাংলাদেশে একই রেট
 
