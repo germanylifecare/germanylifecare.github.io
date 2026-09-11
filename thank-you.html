@@ -11,7 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Manrope:wght@500;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 <style>
-  .ty-wrap{min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px;}
+  .ty-wrap{min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px; padding:24px;}
   .ty-card{max-width:480px; width:100%; background:var(--card); border:1px solid var(--card-border); border-radius:var(--radius); box-shadow:var(--shadow); padding:40px 28px; text-align:center;}
   .ty-logo{width:56px; height:56px; object-fit:contain; margin:0 auto 18px;}
   .ty-check{width:64px; height:64px; margin:0 auto 18px; border-radius:50%; background:linear-gradient(145deg, var(--pharma-green), #0A4A29); display:flex; align-items:center; justify-content:center; box-shadow:0 12px 28px -8px rgba(15,107,60,0.45);}
@@ -21,6 +21,17 @@
   .ty-support{font-size:14px; color:var(--text-dim); margin:22px 0 0;}
   .ty-support a{color:var(--tangerine); font-weight:700; text-decoration:none;}
   .ty-home{margin-top:22px;}
+
+  .ty-upsell{max-width:600px; width:100%;}
+  .ty-upsell__label{text-align:center; font-size:15px; font-weight:700; color:var(--text); margin:0 0 14px;}
+  .upsell__grid{display:grid; grid-template-columns:repeat(2,1fr); gap:14px;}
+  .upsell__card{background:var(--glass-bg); backdrop-filter:var(--glass-blur); -webkit-backdrop-filter:var(--glass-blur); border:1px solid var(--glass-border); border-radius:var(--radius); padding:16px 14px 16px; text-align:center; box-shadow:var(--shadow);}
+  .upsell__media{aspect-ratio:1/1; border-radius:var(--radius-sm); overflow:hidden; margin-bottom:10px; background:var(--ink-soft);}
+  .upsell__media img{width:100%; height:100%; object-fit:contain; padding:8px;}
+  .upsell__name{font-size:14.5px; font-weight:700; margin:0 0 6px;}
+  .upsell__desc{font-size:12px; color:var(--text-dim); margin:0 0 10px;}
+  .upsell__price{font-size:18px; font-weight:800; color:var(--tangerine); margin-bottom:10px;}
+  @media (max-width:560px){ .upsell__grid{grid-template-columns:1fr;} }
 </style>
 <!-- Meta Pixel Code -->
 <script>
@@ -72,6 +83,30 @@ src="https://www.facebook.com/tr?id=2287615058738619&ev=PageView&noscript=1"
     <a href="index.html" class="btn btn--primary btn--block ty-home">হোমপেজে ফিরে যান</a>
 
     <p class="ty-support">কোনো প্রশ্ন থাকলে কল করুন: <a href="tel:09617996611">09617996611</a></p>
+  </div>
+
+  <div class="ty-upsell">
+    <p class="ty-upsell__label">অর্ডারের সাথে আরও কিছু যোগ করতে চান? 🎁</p>
+    <div class="upsell__grid">
+      <div class="upsell__card">
+        <div class="upsell__media">
+          <img src="img/combo-3pcs.jpg" alt="3 Pcs Combo Pack" loading="lazy">
+        </div>
+        <h3 class="upsell__name">3 Pcs Combo Pack</h3>
+        <p class="upsell__desc">প্রতিদিনের এনার্জি ও ভিটালিটি সাপোর্টের জন্য ৩টি ফর্মুলার কম্বো।</p>
+        <div class="upsell__price">৳1320</div>
+        <a href="https://wa.me/8801303886699?text=আমি%20এইমাত্র%20অর্ডার%20করেছি%2C%20সাথে%20৩%20Pcs%20Combo%20Pack%20(৳1320)%20ও%20যোগ%20করতে%20চাই" target="_blank" rel="noopener" class="btn btn--primary btn--block">WhatsApp-এ যোগ করুন</a>
+      </div>
+      <div class="upsell__card">
+        <div class="upsell__media">
+          <img src="img/monex-man.jpg" alt="Monex Man Capsule" loading="lazy">
+        </div>
+        <h3 class="upsell__name">Monex Man Capsule</h3>
+        <p class="upsell__desc">প্রতিদিনের এনার্জি, স্ট্যামিনা ও কনফিডেন্স ধরে রাখতে সহায়ক।</p>
+        <div class="upsell__price">৳1500</div>
+        <a href="https://wa.me/8801303886699?text=আমি%20এইমাত্র%20অর্ডার%20করেছি%2C%20সাথে%20Monex%20Man%20Capsule%20(৳1500)%20ও%20যোগ%20করতে%20চাই" target="_blank" rel="noopener" class="btn btn--primary btn--block">WhatsApp-এ যোগ করুন</a>
+      </div>
+    </div>
   </div>
 </div>
 
