@@ -18,6 +18,33 @@ const els = {};
 let supabaseClient;
 document.addEventListener("DOMContentLoaded", init);
 
+// ---------------------------------------------------------------------
+// Fraud-guard signals — device_id (localStorage) + client IP (ipify)
+// একই ফোন নাম্বারে একই দিনে ২য় অর্ডার আটকানোর জন্য Supabase-এ পাঠানো হয়
+// ---------------------------------------------------------------------
+function getDeviceId() {
+  try {
+    let id = localStorage.getItem("glc_device_id");
+    if (!id) {
+      id = crypto.randomUUID();
+      localStorage.setItem("glc_device_id", id);
+    }
+    return id;
+  } catch (e) {
+    return null;
+  }
+}
+
+async function getClientIp() {
+  try {
+    const res = await fetch("https://api.ipify.org?format=json");
+    const data = await res.json();
+    return data.ip || null;
+  } catch (e) {
+    return null;
+  }
+}
+
 function init() {
   cacheEls();
   supabaseClient = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
@@ -321,6 +348,11 @@ async function onSubmit(e) {
   const deliveryCharge = CONFIG.DELIVERY_CHARGE;
   const grandTotal = productTotal + deliveryCharge;
 
+  setSubmitting(true);
+  showStatus("অর্ডার সাবমিট হচ্ছে…", "");
+
+  const clientIp = await getClientIp();
+
   const payload = {
     customer_name: data.customerName.trim(),
     phone: data.phone,
@@ -334,17 +366,20 @@ async function onSubmit(e) {
     payment_method: data.paymentMethod || null,
     sender_number: data.senderNumber || null,
     trx_id: data.trxId.trim() || null,
+    ip_address: clientIp,
+    device_id: getDeviceId(),
   };
-
-  setSubmitting(true);
-  showStatus("অর্ডার সাবমিট হচ্ছে…", "");
 
   try {
     const { error } = await supabaseClient.from("orders").insert(payload);
 
     if (error) {
       console.error(error);
-      showStatus("দুঃখিত, অর্ডার সাবমিট হয়নি। একটু পর আবার চেষ্টা করুন অথবা কল করুন: " + CONFIG.SUPPORT_PHONE, "error");
+      if (error.message && error.message.includes("DUPLICATE_ORDER_TODAY")) {
+        showStatus("আপনি আজকে ইতিমধ্যে একটি অর্ডার করেছেন। প্যাকেজ পরিবর্তন করতে চাইলে কল করুন: " + CONFIG.SUPPORT_PHONE, "error");
+      } else {
+        showStatus("দুঃখিত, অর্ডার সাবমিট হয়নি। একটু পর আবার চেষ্টা করুন অথবা কল করুন: " + CONFIG.SUPPORT_PHONE, "error");
+      }
       setSubmitting(false);
       return;
     }
