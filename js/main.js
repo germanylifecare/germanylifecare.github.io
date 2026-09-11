@@ -89,11 +89,37 @@ function cacheEls() {
 }
 
 function populateDistricts() {
-  const list = document.getElementById("districtList");
-  DISTRICTS.forEach(name => {
-    const opt = document.createElement("option");
-    opt.value = name;
-    list.appendChild(opt);
+  const input = els.district;
+  const list = document.getElementById("districtSuggestions");
+
+  function renderSuggestions(query) {
+    const q = query.trim().toLowerCase();
+    const matches = q ? DISTRICTS.filter(name => name.toLowerCase().includes(q)) : DISTRICTS;
+
+    list.innerHTML = "";
+    if (matches.length === 0) {
+      list.innerHTML = `<div class="autocomplete-empty">কোনো জেলা পাওয়া যায়নি</div>`;
+    } else {
+      matches.forEach(name => {
+        const item = document.createElement("div");
+        item.className = "autocomplete-item";
+        item.setAttribute("role", "option");
+        item.textContent = name;
+        item.addEventListener("mousedown", (e) => {
+          e.preventDefault();
+          input.value = name;
+          list.hidden = true;
+        });
+        list.appendChild(item);
+      });
+    }
+    list.hidden = false;
+  }
+
+  input.addEventListener("focus", () => renderSuggestions(input.value));
+  input.addEventListener("input", () => renderSuggestions(input.value));
+  input.addEventListener("blur", () => {
+    setTimeout(() => { list.hidden = true; }, 120);
   });
 }
 

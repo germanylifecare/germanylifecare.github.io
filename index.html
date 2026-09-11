@@ -126,6 +126,34 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .fab-stack { right: 14px; bottom: calc(78px + 14px + env(safe-area-inset-bottom, 0px)); }
     .fab-btn { width: 46px; height: 46px; }
   }
+
+  .autocomplete-wrap { position: relative; }
+  .autocomplete-list {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    max-height: 240px;
+    overflow-y: auto;
+    background: var(--glass-bg-soft);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow);
+    z-index: 30;
+    padding: 6px;
+  }
+  .autocomplete-item {
+    padding: 10px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14.5px;
+    color: var(--text);
+    transition: background .12s ease, color .12s ease;
+  }
+  .autocomplete-item:hover { background: rgba(200,30,44,0.08); color: var(--tangerine); }
+  .autocomplete-empty { padding: 10px 12px; font-size: 13px; color: var(--text-dim); }
 </style>
 <!-- Meta Pixel Code -->
 <script>
@@ -378,10 +406,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <span class="form-error" data-for="address"></span>
           </div>
 
-          <div class="form-field">
+          <div class="form-field autocomplete-wrap">
             <label for="district">জেলা / শহর *</label>
-            <input type="text" id="district" name="district" list="districtList" required autocomplete="off" placeholder="জেলার নাম লিখুন">
-            <datalist id="districtList"></datalist>
+            <input type="text" id="district" name="district" required autocomplete="off" placeholder="জেলার নাম লিখুন">
+            <div class="autocomplete-list" id="districtSuggestions" role="listbox" hidden></div>
             <span class="form-error" data-for="district"></span>
           </div>
 
