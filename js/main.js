@@ -107,7 +107,7 @@ function wireScrollReveal() {
 
 function cacheEls() {
   [
-    "orderForm","website","customerName","phone","address","district","quantity",
+    "orderForm","website","customerName","phone","email","address","district","quantity",
     "qtyEcho","productTotal","deliveryEcho","grandTotal",
     "advanceEcho","advanceEcho2","codEcho","bkashNumber","nagadNumber",
     "paymentMethod","senderNumber","trxId","submitBtn","formStatus",
@@ -220,6 +220,7 @@ function recalcTotals() {
 // Validation
 // ---------------------------------------------------------------------
 const PHONE_RE = /^01[0-9]{9}$/;
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function setError(fieldId, message) {
   const el = document.querySelector(`.form-error[data-for="${fieldId}"]`);
@@ -242,6 +243,9 @@ function validateForm(data) {
 
   if (!data.district || !DISTRICTS.includes(data.district)) { setError("district", "লিস্ট থেকে সঠিক জেলা বাছাই করুন"); ok = false; }
   else setError("district", "");
+
+  if (data.email && !EMAIL_RE.test(data.email)) { setError("email", "সঠিক ইমেইল দিন (ঐচ্ছিক, খালি রাখতে পারেন)"); ok = false; }
+  else setError("email", "");
 
   if (data.senderNumber && !PHONE_RE.test(data.senderNumber)) { setError("senderNumber", "সঠিক ১১ ডিজিটের নাম্বার দিন"); ok = false; }
   else setError("senderNumber", "");
@@ -354,6 +358,7 @@ async function onSubmit(e) {
   const data = {
     customerName: els.customerName.value,
     phone: els.phone.value.trim(),
+    email: els.email.value.trim(),
     address: els.address.value,
     district: els.district.value,
     quantity: parseInt(els.quantity.value || "1", 10),
@@ -401,6 +406,7 @@ async function onSubmit(e) {
     payment_method: data.paymentMethod || null,
     sender_number: data.senderNumber || null,
     trx_id: data.trxId.trim() || null,
+    email: data.email || null,
     ip_address: clientIp,
     device_id: getDeviceId(),
   };
